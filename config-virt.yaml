@@ -1,0 +1,59 @@
+# Deploy an HA openstack environment.
+
+# Create 3 controllers, 3 ceph nodes, and 1 compute node.
+overcloud_nodes:
+  - name: control_0
+    flavor: control
+  - name: control_1
+    flavor: control
+  - name: control_2
+    flavor: control
+  - name: ceph_0
+    flavor: ceph
+  - name: ceph_1
+    flavor: ceph
+  - name: ceph_2
+    flavor: ceph
+  - name: compute_0
+    flavor: compute
+
+undercloud_memory: 16384
+undercloud_vcpu: 4
+control_memory: 6144
+control_vcpu: 1
+ceph_memory: 6144
+ceph_vcpu: 1
+compute_memory: 6144
+compute_vcpu: 1
+
+step_introspect: false
+
+network_isolation: true
+test_tempest: false
+test_ping: true
+enable_pacemaker: true
+
+extra_args: >-
+  --control-scale 3
+  --ceph-storage-scale 3
+  --compute-scale 1
+  --neutron-network-type vxlan
+  --neutron-tunnel-types vxlan
+  --ntp-server clock.corp.redhat.com
+  -e /usr/share/openstack-tripleo-heat-templates/environments/storage-environment.yaml
+
+release: mitaka
+undercloud_image_url: http://artifacts.ci.centos.org/artifacts/rdo/images/mitaka/delorean/stable/undercloud.qcow2
+overcloud_image_url: http://artifacts.ci.centos.org/artifacts/rdo/images/mitaka/delorean/stable/ironic-python-agent.tar
+ipa_image_url: http://artifacts.ci.centos.org/artifacts/rdo/images/mitaka/delorean/stable/overcloud-full.tar
+
+# networks:
+# - name: external
+#   bridge: brext
+#   address: 192.168.23.1
+#   netmask: 255.255.255.0
+
+# - name: overcloud
+#   bridge: brovc
+
+
